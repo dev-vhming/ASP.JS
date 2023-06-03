@@ -1,4 +1,4 @@
-
+//META{"name":"ASP.JS","source":"https://raw.githubusercontent.com/dev-vhming/ASP.JS/main/ASP.JS","website":"https://github.com/dev-vhming/ASP.JS"}*//
 
 class AnimatedStatus {
     /* Funcitons Better Discord VHMing */
