@@ -1,11 +1,11 @@
-//META{"name":"ASP.js","source":"https://raw.githubusercontent.com/dev-vhming/ASP.JS/main/ASP.js","website":"https://github.com/dev-vhming/ASP.JS"}*//
+//META{"name":"AnimatedStatus","source":"https://raw.githubusercontent.com/toluschr/BetterDiscord-Animated-Status/master/Animated_Status.plugin.js","website":"https://github.com/toluschr/BetterDiscord-Animated-Status"}*//
 
 class AnimatedStatus {
 	/* BD functions */
 	getName() { return "Animated Status"; }
 	getVersion() { return "2.0.0"; }
 	getAuthor() { return "VHMing"; }
-	getDescription() { return "ASP "; }
+	getDescription() { return "Animate your Discord status"; }
 
 	SetData(key, value) {
 		BdApi.setData("AnimatedStatus", key, value);
@@ -296,63 +296,63 @@ const Status = {
 };
 // Được sử dụng để dễ dàng tạo kiểu cho các phần tử như phần tử Discord 'gốc' 
 const GUI = {
-        newInput: (text = "", placeholder = "") => {
-            let input = document.createElement("input");
-            input.className = "inputDefault-3FGxgL input-2g-os5";
-            input.value = String(text);
-            input.placeholder = String(placeholder);
-            return input;
-        }, 
+	newInput: (text = "", placeholder = "") => {
+		let input = document.createElement("input");
+		input.className = "inputDefault-3FGxgL input-2g-os5";
+		input.value = String(text);
+		input.placeholder = String(placeholder);
+		return input;
+	},
 
-        newNumericInput:(tex = "", minimum = 0, palaceholder = "") => {
-            let out = GUI.newInput(text, placeholder);
-            out.setAttribute("type", "number");
-            out.addEventListener("focusout", () => {
-                    if (parseInt(out.value) < minimum) {
-                            out.value = String(minimum);
-                            BdApi.showToast('value must not be lower than S{minimum}', {type: "error"});
-                    }  
-            });
-            return out;
-        },
+	newNumericInput: (text = "", minimum = 0, placeholder = "") => {
+		let out = GUI.newInput(text, placeholder);
+		out.setAttribute("type", "number");
+		out.addEventListener("focusout", () => {
+			if (parseInt(out.value) < minimum) {
+				out.value = String(minimum);
+				BdApi.showToast(`Value must not be lower than ${minimum}`, {type: "error"});
+			}
+		});
+		return out;
+	},
 
-        newLabel: (text = "") => {
-            let label = document.createElement("h5");
-            label.className = "h5-2RwDNl"
-            label.innerText = String(text);
-            return label;
-        },
+	newLabel: (text = "") => {
+		let label = document.createElement("h5");
+		label.className = "h5-2RwDNl";
+		label.innerText = String(text);
+		return label;
+	},
 
-        newButton: (text, filled = true) => {
-           let button = document.createElement("button");
-           button.className = "button-f2h6uQ colorBrand-I6CyqQ sizeSmall-wU2dO- grow-2sR_-F";
-           if (filled) button.classList.add("lookFilled-yCfaCM");
-           else button.classList.add("lookOutlined-3yKVGo");
-           button.innerText = String(text);
-           return button;   
-        },
-        
-        newHBox: () => {
-                let hbox = document.createElement("div");
-                hbox.style.display = "flex";
-                hbox.style.flexDirection = "row";
-                return hbox;
-        },
-        
-        setExpand: (element, value) => {
-                element.style.flexGrow = value;
-                return element;
-        },
-        
-        setSuggested: (element, value = true) => {
-                if (value) element.classList.add("colorGreen-3y-Z79");
-                else element.classList.remove("colorGreen-3y-Z79");
-                return element;
-        },
-        
-        setDestructive: (element, value = true) => {
-                if (value) element .classList.add("colorRed-rQXKgM");
-                else element.classList.remove("colorRED-rQXKgM");
-                return element;
-        }
+	newButton: (text, filled = true) => {
+		let button = document.createElement("button");
+		button.className = "button-f2h6uQ colorBrand-I6CyqQ sizeSmall-wU2dO- grow-2sR_-F";
+		if (filled) button.classList.add("lookFilled-yCfaCM");
+		else button.classList.add("lookOutlined-3yKVGo");
+		button.innerText = String(text);
+		return button;
+	},
+
+	newHBox: () => {
+		let hbox = document.createElement("div");
+		hbox.style.display = "flex";
+		hbox.style.flexDirection = "row";
+		return hbox;
+	},
+
+	setExpand: (element, value) => {
+		element.style.flexGrow = value;
+		return element;
+	},
+
+	setSuggested: (element, value = true) => {
+		if (value) element.classList.add("colorGreen-3y-Z79");
+		else element.classList.remove("colorGreen-3y-Z79");
+		return element;
+	},
+
+	setDestructive: (element, value = true) => {
+		if (value) element.classList.add("colorRed-rQXKgM");
+		else element.classList.remove("colorRed-rQXKgM");
+		return element;
+	}
 };
