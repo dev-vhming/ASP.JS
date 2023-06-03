@@ -1,300 +1,299 @@
 //META{"name":"ASP.js","source":"https://raw.githubusercontent.com/dev-vhming/ASP.JS/main/ASP.js","website":"https://github.com/dev-vhming/ASP.JS"}*//
 
 class AnimatedStatus {
-    /* Funcitons Better Discord VHMing */
-    getName() { return "ASP"; }
-    getVersion() { return "2.0.0"; }
-    getAuthor() { return "VHMing"; }
-    getDescription() { return "ASP Discord Status"; }
+	/* BD functions */
+	getName() { return "Animated Status"; }
+	getVersion() { return "2.0.0"; }
+	getAuthor() { return "VHMing"; }
+	getDescription() { return "ASP "; }
 
-    setData(key, value) {
-        BdApi.setData("ASP", key, value);
-    }
+	SetData(key, value) {
+		BdApi.setData("AnimatedStatus", key, value);
+	}
 
-    getGata(key) {
-        return bdApi.getData("ASP", key);
-    }
+	GetData(key) {
+		return BdApi.getData("AnimatedStatus", key);
+	}
 
-    /* Retated To ASP.JS */
-    load() {
-        this.kSpacing = "15px";
-        this.kMinTimeout = 100;
-        this.cancel = undefined;
+	/* Code related to Animations */
+	load() {
+		this.kSpacing = "15px";
+		this.kMinTimeout = 100;
+		this.cancel = undefined;
 
-        this.animation = this.GetData("animation") || [];
-        this.timeout = this.GetData("timeout") || this.kMinTimeout;
-        this.randomize = this.GetData("randomize") || false;
-        
-        this.modules = this.modules || (() => {
-            let m = []
-            webpackChunkdiscord_app.push([['ASP'], {}, e => { m = m.concat(Object.values(e.c)) }])
-            return m
-        })();
+		this.animation = this.GetData("animation") || [];
+		this.timeout = this.GetData("timeout") || this.kMinTimeout;
+		this.randomize = this.GetData("randomize") || false;
 
-    /* Truy xuất file json config */
-    if (typeof this.timeout == "string")
-            this.timeout = parseInt(this.timeout);
-    if (this.animation.length > 0 && Array.isArray(this.animation[0]))
-            this.animation = this.animation.map(em => this.ConfigObjectFromArray(em));
+		this.modules = this.modules || (() => {
+			let m = []
+			webpackChunkdiscord_app.push([['AnimatedStatus'], {}, e => { m = m.concat(Object.values(e.c)) }])
+			return m
+		})();
 
-    Status.authToken = this.modules.find(m => m.exports?.default?.getToken !== void 0).exports.default.getToken();
-    this.currentUser = this.modules.find(m => m.exports?.default?.getCurrentUser !== void 0).exports.default.getCurrentUser();
-    }
+		// Import Older Config Files
+		if (typeof this.timeout == "string")
+			this.timeout = parseInt(this.timeout);
+		if (this.animation.length > 0 && Array.isArray(this.animation[0]))
+			this.animation = this.animation.map(em => this.ConfigObjectFromArray(em));
 
-    start() {
-        if (this.animation.length == 0)
-            BdApi.showToast("ASP: No status set. Go to Settings>Plugins to set a custom animation!");
-        else
-            this.AnimationLoop();
-    }
+		Status.authToken = this.modules.find(m => m.exports?.default?.getToken !== void 0).exports.default.getToken();
+		this.currentUser = this.modules.find(m => m.exports?.default?.getCurrentUser !== void 0).exports.default.getCurrentUser();
+	}
 
-    stop() {
-        if (this.cancel) {
-            this.cancel();
-        } else {
-            console.assert(this.loop != undefined);
-            clearTimeout(this.loop);
-        }
-        Status.Set(null);
-    }
+	start() {
+		if (this.animation.length == 0)
+			BdApi.showToast("Animated Status: No status set. Go to Settings>Plugins to set a custom animation!");
+		else
+			this.AnimationLoop();
+	}
 
-    ConfigObjectFromArray(arr) {
-        let data = {};
-        if (arr[0] !== undefined && arr[0].length > 0) data.text       = arr[0];
-        if (arr[1] !== undefined && arr[1].length > 0) data.emoji_name = arr[1];
-        if (arr[2] !== undefined && arr[2].length > 0) data.emoji_id   = arr[2];
-        if (arr[3] !== undefined && arr[3].length > 0) data.timeout    = parseInt(arr[3]);
-        return data;
-    }
+	stop() {
+		if (this.cancel) {
+			this.cancel();
+		} else {
+			console.assert(this.loop != undefined);
+			clearTimeout(this.loop);
+		}
+		Status.Set(null);
+	}
 
-    async ResolveStatusField(text = "") {
-        let evalPrefix = "eval ";
-        if (!text.startsWith(evalPrefix)) return text;
+	ConfigObjectFromArray(arr) {
+		let data = {};
+		if (arr[0] !== undefined && arr[0].length > 0) data.text       = arr[0];
+		if (arr[1] !== undefined && arr[1].length > 0) data.emoji_name = arr[1];
+		if (arr[2] !== undefined && arr[2].length > 0) data.emoji_id   = arr[2];
+		if (arr[3] !== undefined && arr[3].length > 0) data.timeout    = parseInt(arr[3]);
+		return data;
+	}
 
-        try {
-            return eval(text.substr(evalPrefix.length));
-        } catch (e) {
-            BdApi.showToast(e, {type: "error"});
-            return "";
-        }
-    }
+	async ResolveStatusField(text = "") {
+		let evalPrefix = "eval ";
+		if (!text.startsWith(evalPrefix)) return text;
 
-    AnimationLoop(i = 0) {
-        i %= this.animation.length;
+		try {
+			return eval(text.substr(evalPrefix.length));
+		} catch (e) {
+			BdApi.showToast(e, {type: "error"});
+			return "";
+		}
+	}
 
-        // Mỗi vòng lặp cần có biến shouldContinue riêng, nếu không thì có
-        // là khả năng nhiều vòng lặp chạy đồng thời
-        let shouldContinue = true;
-        this.loop = undefined;
-        this.cancel = () => { shouldContinue = false; };
+	AnimationLoop(i = 0) {
+		i %= this.animation.length;
 
-        Promise.all([this.ResolveStatusField(this.animation[i].text),
-                     this.ResolveStatusField(this.animation[i].emoji_name),
-                     this.ResolveStatusField(this.animation[i].emoji_id)]).then(p => {
-            Status.Set(this.ConfigObjectFromArray(p));
-            this.cancel = undefined;
+		// Every loop needs its own shouldContinue variable, otherwise there
+		// is the possibility of multiple loops running simultaneously
+		let shouldContinue = true;
+		this.loop = undefined;
+		this.cancel = () => { shouldContinue = false; };
 
-            if (shouldContinue) {
-                let timeout = this.animation[i].timeout || this.timeout;
-                this.loop = setTimeout(() => {
-                    if (this.randomize) {
-                        i += Math.floor(Math.random() * (this.animation.length - 2));
-                    }
-                    this.AnimationLoop(i + 1);
-                }, timeout);
-            }
-        });
-    }
+		Promise.all([this.ResolveStatusField(this.animation[i].text),
+		             this.ResolveStatusField(this.animation[i].emoji_name),
+		             this.ResolveStatusField(this.animation[i].emoji_id)]).then(p => {
+			Status.Set(this.ConfigObjectFromArray(p));
+			this.cancel = undefined;
 
-    NewEditorRow({text, emoji_name, emoji_id, timeout} = {}) {
-        let hbox = GUI.newHBox();
-        hbox.style.marginBottom = this.kSpacing;
+			if (shouldContinue) {
+				let timeout = this.animation[i].timeout || this.timeout;
+				this.loop = setTimeout(() => {
+					if (this.randomize) {
+						i += Math.floor(Math.random() * (this.animation.length - 2));
+					}
+					this.AnimationLoop(i + 1);
+				}, timeout);
+			}
+		});
+	}
 
-        let textWidget = hbox.appendChild(GUI.newInput(text, "Text"));
-        textWidget.style.marginRight = this.kSpacing;
+	NewEditorRow({text, emoji_name, emoji_id, timeout} = {}) {
+		let hbox = GUI.newHBox();
+		hbox.style.marginBottom = this.kSpacing;
 
-        let emojiWidget = hbox.appendChild(GUI.newInput(emoji_name, "👍" + (this.currentUser.premiumType ? " / Nitro Name" : "")));
-        emojiWidget.style.marginRight = this.kSpacing;
-        emojiWidget.style.width = "140px";
+		let textWidget = hbox.appendChild(GUI.newInput(text, "Text"));
+		textWidget.style.marginRight = this.kSpacing;
 
-        let optNitroIdWidget = hbox.appendChild(GUI.newInput(emoji_id, "Nitro ID"));
-        if (!this.currentUser.premiumType) optNitroIdWidget.style.display = "none";
-        optNitroIdWidget.style.marginRight = this.kSpacing;
-        optNitroIdWidget.style.width = "140px";
+		let emojiWidget = hbox.appendChild(GUI.newInput(emoji_name, "👍" + (this.currentUser.premiumType ? " / Nitro Name" : "")));
+		emojiWidget.style.marginRight = this.kSpacing;
+		emojiWidget.style.width = "140px";
 
-        let optTimeoutWidget = hbox.appendChild(GUI.newNumericInput(timeout, this.kMinTimeout, "Time"));
-        optTimeoutWidget.style.width = "75px";
+		let optNitroIdWidget = hbox.appendChild(GUI.newInput(emoji_id, "Nitro ID"));
+		if (!this.currentUser.premiumType) optNitroIdWidget.style.display = "none";
+		optNitroIdWidget.style.marginRight = this.kSpacing;
+		optNitroIdWidget.style.width = "140px";
 
-        hbox.onkeydown = (e) => {
-            let activeContainer = document.activeElement.parentNode;
-            let activeIndex = Array.from(activeContainer.children).indexOf(document.activeElement);
+		let optTimeoutWidget = hbox.appendChild(GUI.newNumericInput(timeout, this.kMinTimeout, "Time"));
+		optTimeoutWidget.style.width = "75px";
 
-            let keymaps = {
-                "Delete": [
-                    [[false, true], () => {
-                        activeContainer = hbox.nextSibling || hbox.previousSibling;
-                        hbox.parentNode.removeChild(hbox);
-                    }],
-                ],
+		hbox.onkeydown = (e) => {
+			let activeContainer = document.activeElement.parentNode;
+			let activeIndex = Array.from(activeContainer.children).indexOf(document.activeElement);
 
-                "ArrowDown": [
-                    [[true, true], () => {
-                        activeContainer = this.NewEditorRow();
-                        hbox.parentNode.insertBefore(activeContainer, hbox.nextSibling);
-                    }],
-                    [[false, true], () => {
-                        let next = hbox.nextSibling;
-                        if (next != undefined) {
-                            next.replaceWith(hbox);
-                            hbox.parentNode.insertBefore(next, hbox);
-                        }
-                    }],
-                    [[false, false], () => {
-                        activeContainer = hbox.nextSibling;
-                    }],
-                ],
+			let keymaps = {
+				"Delete": [
+					[[false, true], () => {
+						activeContainer = hbox.nextSibling || hbox.previousSibling;
+						hbox.parentNode.removeChild(hbox);
+					}],
+				],
 
-                "ArrowUp": [
-                    [[true, true], () => {
-                        activeContainer = this.NewEditorRow();
-                        hbox.parentNode.insertBefore(activeContainer, hbox);
-                    }],
-                    [[false, true], () => {
-                        let prev = hbox.previousSibling;
-                        if (prev != undefined) {
-                            prev.replaceWith(hbox);
-                            hbox.parentNode.insertBefore(prev, hbox.nextSibling);
-                        }
-                    }],
-                    [[false, false], () => {
-                        activeContainer = hbox.previousSibling;
-                    }],
-                ],
-            };
+				"ArrowDown": [
+					[[true, true], () => {
+						activeContainer = this.NewEditorRow();
+						hbox.parentNode.insertBefore(activeContainer, hbox.nextSibling);
+					}],
+					[[false, true], () => {
+						let next = hbox.nextSibling;
+						if (next != undefined) {
+							next.replaceWith(hbox);
+							hbox.parentNode.insertBefore(next, hbox);
+						}
+					}],
+					[[false, false], () => {
+						activeContainer = hbox.nextSibling;
+					}],
+				],
 
-            let letter = keymaps[e.key];
-            if (letter == undefined) return;
+				"ArrowUp": [
+					[[true, true], () => {
+						activeContainer = this.NewEditorRow();
+						hbox.parentNode.insertBefore(activeContainer, hbox);
+					}],
+					[[false, true], () => {
+						let prev = hbox.previousSibling;
+						if (prev != undefined) {
+							prev.replaceWith(hbox);
+							hbox.parentNode.insertBefore(prev, hbox.nextSibling);
+						}
+					}],
+					[[false, false], () => {
+						activeContainer = hbox.previousSibling;
+					}],
+				],
+			};
 
-            for (let i = 0; i < letter.length; i++) {
-                if (letter[i][0][0] != e.ctrlKey || letter[i][0][1] != e.shiftKey)
-                    continue;
+			let letter = keymaps[e.key];
+			if (letter == undefined) return;
 
-                letter[i][1]();
-                if (activeContainer) activeContainer.children[activeIndex].focus();
-                e.preventDefault();
-                return;
-            }
-        };
-        return hbox;
-    }
+			for (let i = 0; i < letter.length; i++) {
+				if (letter[i][0][0] != e.ctrlKey || letter[i][0][1] != e.shiftKey)
+					continue;
 
-    EditorFromJSON(json) {
-        let out = document.createElement("div");
-        for (let i = 0; i < json.length; i++) {
-            out.appendChild(this.NewEditorRow(json[i]));
-        }
-        return out;
-    }
+				letter[i][1]();
+				if (activeContainer) activeContainer.children[activeIndex].focus();
+				e.preventDefault();
+				return;
+			}
+		};
+		return hbox;
+	}
 
-    JSONFromEditor(editor) {
-        return Array.prototype.slice.call(editor.childNodes).map(row => {
-            return this.ConfigObjectFromArray(Array.prototype.slice.call(row.childNodes).map(e => e.value));
-        });
-    }
-     
-    // Settings UI/UX
-    getSettingsPanel() {
-        let settings = document.createElement("div");
-        settings.style.padding = "10px";
+	EditorFromJSON(json) {
+		let out = document.createElement("div");
+		for (let i = 0; i < json.length; i++) {
+			out.appendChild(this.NewEditorRow(json[i]));
+		}
+		return out;
+	}
 
-        // Vòng chờ
-        settings.appendChild(GUI.newLabel("Step-Duration (3000: 3 seconds, 3500: 3.5 seconds, ...), overwritten by invididual steps"));
-        let timeout = settings.appendChild(GUI.newNumericInput(this.timeout, this.kMinTimeout));
-        timeout.style.marginBottom = this.kSpacing;
+	JSONFromEditor(editor) {
+		return Array.prototype.slice.call(editor.childNodes).map(row => {
+			return this.ConfigObjectFromArray(Array.prototype.slice.call(row.childNodes).map(e => e.value));
+		});
+	}
 
-        // Animation Container
-        settings.appendChild(GUI.newLabel("Animation"));
-        let animationContainer = settings.appendChild(document.createElement("div"));
-        animationContainer.marginBottom = this.kSpacing;
+	// Settings
+	getSettingsPanel() {
+		let settings = document.createElement("div");
+		settings.style.padding = "10px";
 
-        // Chỉnh sửa
-        let edit = animationContainer.appendChild(this.EditorFromJSON(this.animation));
+		// timeout
+		settings.appendChild(GUI.newLabel("Step-Duration (3000: 3 seconds, 3500: 3.5 seconds, ...), overwritten by invididual steps"));
+		let timeout = settings.appendChild(GUI.newNumericInput(this.timeout, this.kMinTimeout));
+		timeout.style.marginBottom = this.kSpacing;
 
-        // Hành động
-        let actions = settings.appendChild(GUI.newHBox());
+		// Animation Container
+		settings.appendChild(GUI.newLabel("Animation"));
+		let animationContainer = settings.appendChild(document.createElement("div"));
+		animationContainer.marginBottom = this.kSpacing;
 
-        // Thêm Step
-        let addStep = actions.appendChild(GUI.setSuggested(GUI.newButton("+", false)));
-        addStep.title = "Add step to end";
-        addStep.onclick = () => edit.appendChild(this.NewEditorRow());
+		// Editor
+		let edit = animationContainer.appendChild(this.EditorFromJSON(this.animation));
 
-        // Xóa Step
-        let delStep = actions.appendChild(GUI.setDestructive(GUI.newButton("-", false)));
-        delStep.title = "Remove last step";
-        delStep.style.marginLeft = this.kSpacing;
-        delStep.onclick = () => edit.removeChild(edit.childNodes[edit.childNodes.length - 1]);
+		// Actions
+		let actions = settings.appendChild(GUI.newHBox());
 
-        // Di chuyển lưu sang phải (XXX sử dụng flexbox)
-        actions.appendChild(GUI.setExpand(document.createElement("div"), 2));
+		// Add Step
+		let addStep = actions.appendChild(GUI.setSuggested(GUI.newButton("+", false)));
+		addStep.title = "Add step to end";
+		addStep.onclick = () => edit.appendChild(this.NewEditorRow());
 
-        // Nút lưu
-        let save = actions.appendChild(GUI.newButton("Save"));
-        GUI.setSuggested(save, true);
-        save.onclick = () => {
-            try {
-                // Cài đặt timeout
-                this.SetData("randomize", this.randomize);
-                this.SetData("timeout", parseInt(timeout.value));
-                this.SetData("animation", this.JSONFromEditor(edit));
-            } catch (e) {
-                BdApi.showToast(e, {type: "error"});
-                return;
-            }
+		// Del Step
+		let delStep = actions.appendChild(GUI.setDestructive(GUI.newButton("-", false)));
+		delStep.title = "Remove last step";
+		delStep.style.marginLeft = this.kSpacing;
+		delStep.onclick = () => edit.removeChild(edit.childNodes[edit.childNodes.length - 1]);
 
-            // Hiện UI
-            BdApi.showToast("Settings were saved!", {type: "success"});
+		// Move save to the right (XXX make use of flexbox)
+		actions.appendChild(GUI.setExpand(document.createElement("div"), 2));
 
-            // Reload lại file
-            this.stop();
-            this.load();
-            this.start();
-        };
+		// Save
+		let save = actions.appendChild(GUI.newButton("Save"));
+		GUI.setSuggested(save, true);
+		save.onclick = () => {
+			try {
+				// Set timeout
+				this.SetData("randomize", this.randomize);
+				this.SetData("timeout", parseInt(timeout.value));
+				this.SetData("animation", this.JSONFromEditor(edit));
+			} catch (e) {
+				BdApi.showToast(e, {type: "error"});
+				return;
+			}
 
-        // Dừng Return
-        return settings;
-    }
+			// Show Toast
+			BdApi.showToast("Settings were saved!", {type: "success"});
+
+			// Restart
+			this.stop();
+			this.load();
+			this.start();
+		};
+
+		// End
+		return settings;
+	}
 }
 
- /* Trạng thái API */
- const Status = {
-    strerror: (req) => {
-        if (req.status  < 400) return undefined;
-        if (req.status == 401) return "Invalid AuthToken";
+/* Status API */
+const Status = {
+	strerror: (req) => {
+		if (req.status  < 400) return undefined;
+		if (req.status == 401) return "Invalid AuthToken";
 
-        // Discord _sometimes_ returns an error message
-        let json = JSON.parse(req.response);
-        for (const s of ["errors", "custom_status", "text", "_errors", 0, "message"])
-            if ((json == undefined) || ((json = json[s]) == undefined))
-                return "Unknown error. Please report at github.com/toluschr/BetterDiscord-Animated-Status";
+		// Discord _sometimes_ returns an error message
+		let json = JSON.parse(req.response);
+		for (const s of ["errors", "custom_status", "text", "_errors", 0, "message"])
+			if ((json == undefined) || ((json = json[s]) == undefined))
+				return "Unknown error. Please report at github.com/toluschr/BetterDiscord-Animated-Status";
 
-        return json;
-    },
+		return json;
+	},
 
-    Set: async (status) => {
-        let req = new XMLHttpRequest();
-        req.open("PATCH", "/api/v9/users/@me/settings", true);
-        req.setRequestHeader("authorization", Status.authToken);
-        req.setRequestHeader("content-type", "application/json");
-        req.onload = () => {
-            let err = Status.strerror(req);
-            if (err != undefined)
-                BdApi.showToast(`ASP: Error: ${err}`, {type: "error"});
-        };
-        if (status === {}) status = null;
-        req.send(JSON.stringify({custom_status: status}));
-    },
+	Set: async (status) => {
+		let req = new XMLHttpRequest();
+		req.open("PATCH", "/api/v9/users/@me/settings", true);
+		req.setRequestHeader("authorization", Status.authToken);
+		req.setRequestHeader("content-type", "application/json");
+		req.onload = () => {
+			let err = Status.strerror(req);
+			if (err != undefined)
+				BdApi.showToast(`Animated Status: Error: ${err}`, {type: "error"});
+		};
+		if (status === {}) status = null;
+		req.send(JSON.stringify({custom_status: status}));
+	},
 };
-
 // Được sử dụng để dễ dàng tạo kiểu cho các phần tử như phần tử Discord 'gốc' 
 const GUI = {
         newInput: (text = "", placeholder = "") => {
