@@ -320,37 +320,40 @@ const GUI = {
         newLabel: (text = "") => {
             let label = document.createElement("h5");
             label.className = "h5-2RwDNl"
-            label.innerTexe = String(text);
+            label.innerText = String(text);
             return label;
         },
 
-        newButton: (text = filled = true) => {
+        newButton: (text, filled = true) => {
            let button = document.createElement("button");
            button.className = "button-f2h6uQ colorBrand-I6CyqQ sizeSmall-wU2dO- grow-2sR_-F";
            if (filled) button.classList.add("lookFilled-yCfaCM");
            else button.classList.add("lookOutlined-3yKVGo");
-           button.innerText = string(text);
+           button.innerText = String(text);
            return button;   
         },
-        newHBox: () => {
-            let hbox = document.createElement("div");
-            hbox.style.display = "flex";
-            hbox.style.flexDirection = "row";
-            return hbox;
-        },
-        setExpand: (Element, value) => {
-            Element.style.flexGrow = value;
-            return Element;
-        },
-        setSuggested: (Element, value = true) => {
-            if (value) Element.classList.add("colorGreen-3y-Z79");
-            else Element.classList.remove("colorGreen-3y-Z79");
-            return Element;
-        },
-        setDestructive: (Element, value = true) => {
-            if (value) Element .classList.add(colorRed-rQXKgM);
-            else Element.classList.remove("colorRED-rQXKgM");
-            return Element;
-        }
         
+        newHBox: () => {
+                let hbox = document.createElement("div");
+                hbox.style.display = "flex";
+                hbox.style.flexDirection = "row";
+                return hbox;
+        },
+        
+        setExpand: (element, value) => {
+                element.style.flexGrow = value;
+                return element;
+        },
+        
+        setSuggested: (element, value = true) => {
+                if (value) element.classList.add("colorGreen-3y-Z79");
+                else element.classList.remove("colorGreen-3y-Z79");
+                return element;
+        },
+        
+        setDestructive: (element, value = true) => {
+                if (value) element .classList.add("colorRed-rQXKgM");
+                else element.classList.remove("colorRED-rQXKgM");
+                return element;
+        }
 };
