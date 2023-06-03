@@ -1,18 +1,18 @@
-//META{"name":"AnimatedStatus","source":"https://raw.githubusercontent.com/toluschr/BetterDiscord-Animated-Status/master/Animated_Status.plugin.js","website":"https://github.com/toluschr/BetterDiscord-Animated-Status"}*//
+//META{"name":"ASP","source":"https://raw.githubusercontent.com/dev-vhming/ASP.JS/main/ASP.js","website":"https://raw.githubusercontent.com/dev-vhming/ASP.JS"}*//
 
-class AnimatedStatus {
+class ASP {
 	/* BD functions */
-	getName() { return "Animated Status"; }
+	getName() { return "ASP"; }
 	getVersion() { return "2.0.0"; }
 	getAuthor() { return "VHMing"; }
 	getDescription() { return "Animate your Discord status"; }
 
 	SetData(key, value) {
-		BdApi.setData("AnimatedStatus", key, value);
+		BdApi.setData("ASP", key, value);
 	}
 
 	GetData(key) {
-		return BdApi.getData("AnimatedStatus", key);
+		return BdApi.getData("ASP", key);
 	}
 
 	/* Code related to Animations */
@@ -27,7 +27,7 @@ class AnimatedStatus {
 
 		this.modules = this.modules || (() => {
 			let m = []
-			webpackChunkdiscord_app.push([['AnimatedStatus'], {}, e => { m = m.concat(Object.values(e.c)) }])
+			webpackChunkdiscord_app.push([['ASP'], {}, e => { m = m.concat(Object.values(e.c)) }])
 			return m
 		})();
 
@@ -43,7 +43,7 @@ class AnimatedStatus {
 
 	start() {
 		if (this.animation.length == 0)
-			BdApi.showToast("Animated Status: No status set. Go to Settings>Plugins to set a custom animation!");
+			BdApi.showToast("ASP: Không có trạng thái nào được đặt. Đi tới Cài đặt > Plugin để đặt hoạt ảnh tùy chỉnh!");
 		else
 			this.AnimationLoop();
 	}
@@ -122,7 +122,7 @@ class AnimatedStatus {
 		optNitroIdWidget.style.marginRight = this.kSpacing;
 		optNitroIdWidget.style.width = "140px";
 
-		let optTimeoutWidget = hbox.appendChild(GUI.newNumericInput(timeout, this.kMinTimeout, "Time"));
+		let optTimeoutWidget = hbox.appendChild(GUI.newNumericInput(timeout, this.kMinTimeout, "Thời gian"));
 		optTimeoutWidget.style.width = "75px";
 
 		hbox.onkeydown = (e) => {
@@ -208,7 +208,7 @@ class AnimatedStatus {
 		settings.style.padding = "10px";
 
 		// timeout
-		settings.appendChild(GUI.newLabel("Step-Duration (3000: 3 seconds, 3500: 3.5 seconds, ...), overwritten by invididual steps"));
+		settings.appendChild(GUI.newLabel("Delay-Thời Gian (100: 0.1 giây, 1000: 1 giây, 3500: 3.5 giây, ...), ghi đè bởi các bước riêng lẻ"));
 		let timeout = settings.appendChild(GUI.newNumericInput(this.timeout, this.kMinTimeout));
 		timeout.style.marginBottom = this.kSpacing;
 
@@ -252,7 +252,7 @@ class AnimatedStatus {
 			}
 
 			// Show Toast
-			BdApi.showToast("Settings were saved!", {type: "success"});
+			BdApi.showToast("Cài đặt đã được lưu!", {type: "success"});
 
 			// Restart
 			this.stop();
@@ -275,7 +275,7 @@ const Status = {
 		let json = JSON.parse(req.response);
 		for (const s of ["errors", "custom_status", "text", "_errors", 0, "message"])
 			if ((json == undefined) || ((json = json[s]) == undefined))
-				return "Unknown error. Please report at github.com/toluschr/BetterDiscord-Animated-Status";
+				return "Unknown error. Please report at github.com/dev-vhming/ASP.JS";
 
 		return json;
 	},
@@ -288,7 +288,7 @@ const Status = {
 		req.onload = () => {
 			let err = Status.strerror(req);
 			if (err != undefined)
-				BdApi.showToast(`Animated Status: Error: ${err}`, {type: "error"});
+				BdApi.showToast(`ASP: Error: ${err}`, {type: "error"});
 		};
 		if (status === {}) status = null;
 		req.send(JSON.stringify({custom_status: status}));
